@@ -7,7 +7,7 @@ from config import WORKSTATIONS, LOGSTASH_HOST, LOGSTASH_PORT
 from connection import connect_to_workstation
 from log_retrieval import retrieve_logs
 
-LOGSTASH_URL = f'http://{LOGSTASH_HOST}:{LOGSTASH_PORT}'
+LOGSTASH_URL = f'http://{10.10.20.106}:{5044}'
 
 def send_to_logstash(log_entry):
     headers = {'Content-Type': 'application/json'}
