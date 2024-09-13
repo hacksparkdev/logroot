@@ -34,7 +34,25 @@ app.post('/trigger-python-module', async (req, res) => {
     }
 });
 
+// Endpoint to fetch task result by ID
+app.get('/task/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        // Fetch the task from Elasticsearch by ID
+        const result = await esClient.get({
+            index: 'python-tasks',
+            id: id
+        });
+
+        res.send(result._source);
+    } catch (error) {
+        console.error(`Error fetching task from Elasticsearch: ${error.message}`);
+        res.status(500).send('Error fetching task');
+    }
+});
+
 app.listen(port, () => {
-    console.log(`Node.js server running on <http://localhost>:${port}`);
+    console.log(`Node.js server running on http://localhost:${port}`);
 });
 
