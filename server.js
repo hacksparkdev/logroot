@@ -3,10 +3,11 @@ const { Client } = require('@elastic/elasticsearch');
 const app = express();
 const port = 3000;
 
-app.use(express.json());
-
 // Initialize Elasticsearch client
 const esClient = new Client({ node: 'http://10.10.20.107:9200' });
+
+// Serve static files
+app.use(express.static('public'));
 
 // Endpoint to queue a Python module execution
 app.post('/trigger-python-module', async (req, res) => {
@@ -34,21 +35,31 @@ app.post('/trigger-python-module', async (req, res) => {
     }
 });
 
-// Endpoint to fetch task result by ID
-app.get('/task/:id', async (req, res) => {
-    const { id } = req.params;
-
+// Endpoint to fetch data for chart
+app.get('/data', async (req, res) => {
     try {
-        // Fetch the task from Elasticsearch by ID
-        const result = await esClient.get({
+        // Query Elasticsearch for completed tasks
+        const result = await esClient.search({
             index: 'python-tasks',
-            id: id
+            body: {
+                query: {
+                    match: { status: 'completed' }
+                },
+                sort: [{ created_at: { order: 'desc' } }]
+            }
         });
 
-        res.send(result._source);
+        // Process the results
+        const data = result.body.hits.hits.map(hit => ({
+            timestamp: hit._source.created_at,
+            moduleName: hit._source.moduleName,
+            result: hit._source.result
+        }));
+
+        res.json(data);
     } catch (error) {
-        console.error(`Error fetching task from Elasticsearch: ${error.message}`);
-        res.status(500).send('Error fetching task');
+        console.error(`Error fetching data from Elasticsearch: ${error.message}`);
+        res.status(500).send('Error fetching data');
     }
 });
 
