@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/hacksparkdev/logroot#readme",
   "dependencies": {
-    "@elastic/elasticsearch": "^8.15.0"
+    "@elastic/elasticsearch": "^8.15.0",
+    "express": "^4.21.0",
+    "web-streams-polyfill": "^4.0.0"
   }
 }

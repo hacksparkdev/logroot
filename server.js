@@ -5,6 +5,7 @@ const port = 3000;
 
 app.use(express.json());
 
+
 // Initialize Elasticsearch client
 const esClient = new Client({ node: 'http://10.10.20.107:9200' });
 
@@ -38,13 +39,3 @@ app.listen(port, () => {
     console.log(`Node.js server running on <http://localhost>:${port}`);
 });
 
-<<<<<<< HEAD
-	if (!moduleName){
-		return res.status(400).send('Module name is required')
-
-	}
-
-	
-})
-=======
->>>>>>> 36efec4f92caaf427a551b705c17ec6469a5c575
