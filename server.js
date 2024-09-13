@@ -12,5 +12,10 @@ const esClient = new Client({node: 'http://10.10.20.107:9200'});
 app.post('/trigger-python-module', async (req, res) => {
 	const {moduleName} = req.body;
 
+	if (!moduleName){
+		return res.status(400).send('Module name is required')
+
+	}
+
 	
 })
