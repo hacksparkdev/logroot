@@ -13,7 +13,7 @@ def read_event_log(log_type='Security'):
     for event in events:
         event_info = {
             'EventID': event.EventID,
-            'Source': event.SourceName
+            'Source': event.SourceName,
             'General': event.General
         }
         event_data.append(event_info)
