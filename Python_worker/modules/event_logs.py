@@ -14,7 +14,7 @@ def read_event_log(log_type='Security'):
         event_info = {
             'EventID': event.EventID,
             'Source': event.SourceName,
-            'General': event.General
+            'Description': winevt.FormatMessage(winevt.EVENTLOG_AUDIT_FAILURE)
         }
         event_data.append(event_info)
 
