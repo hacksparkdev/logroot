@@ -17,6 +17,13 @@
             "status": "pending",
             "Created_at": "2024-09-12T10:00:00Z",
             "result": "Module Executed Successfully. Output {'value':42}"
+        },
+        {
+             "moduleName": "powershell",
+             "status": "pending",
+             "Created_at": "2024-09-12T10:00:00Z",
+             "result": "Module Executed Successfully. Output {'value':42}"
+
         }
 
     ]
