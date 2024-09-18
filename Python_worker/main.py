@@ -1,4 +1,8 @@
-from elasticsearch import Elasticsearch
+import hashlib
+import json
+from watchdog.observers import Observer
+from watchdog.events import PatternMatchingEventHandler
+import schedule
 import time
 import importlib.util
 
@@ -28,41 +32,6 @@ def load_and_run_module(module_name):
 # Poll Elasticsearch for pending tasks
 def poll_tasks():
     while True:
-        # Search for tasks in the "pending" state in the python-tasks index
-        res = es.search(index='python-tasks', body={
-            "query": {
-                "match": {
-                    "status": "pending"
-                }
-            }
-        })
+        schedule.run_pending()
+        time.sleep(1)
 
-        # Process each task found in Elasticsearch
-        for hit in res['hits']['hits']:
-            task_id = hit['_id']
-            module_name = hit['_source']['moduleName']
-
-            print(f"Running module {module_name} for task {task_id}")
-
-            # Update task status to "running"
-            es.update(index='python-tasks', id=task_id, body={
-                "doc": {"status": "running"}
-            })
-
-            # Run the requested module and capture the result
-            success, result = load_and_run_module(module_name)
-            new_status = "completed" if success else "failed"
-
-            # Update Elasticsearch with the new task status and result
-            es.update(index='python-tasks', id=task_id, body={
-                "doc": {
-                    "status": new_status,
-                    "result": result
-                }
-            })
-
-        # Poll every 5 seconds to look for new tasks
-        time.sleep(5)
-
-if __name__ == "__main__":
-    poll_tasks()
