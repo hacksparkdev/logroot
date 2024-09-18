@@ -1,16 +1,9 @@
 const express = require('express');
 const { Client } = require('@elastic/elasticsearch');
-const path = require('path');
 const app = express();
 const port = 3000;
 
-// Middleware to parse JSON and form data
 app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // Add this line
-
-// Set the view engine to EJS
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
 
 // Initialize Elasticsearch client
 const esClient = new Client({ node: 'http://10.10.20.107:9200' });
@@ -34,14 +27,15 @@ app.post('/trigger-python-module', async (req, res) => {
             }
         });
 
-        res.send(`Module ${moduleName} queued for execution with task ID: ${result._id}`);
+        // Redirect to the task result page with the task ID
+        res.redirect(`/task/${result._id}`);
     } catch (error) {
         console.error(`Error adding task to Elasticsearch: ${error.message}`);
         res.status(500).send('Error adding task');
     }
 });
 
-// Endpoint to fetch task result by ID and render it
+// Endpoint to fetch task result by ID
 app.get('/task/:id', async (req, res) => {
     const { id } = req.params;
 
@@ -52,17 +46,11 @@ app.get('/task/:id', async (req, res) => {
             id: id
         });
 
-        // Render the result using EJS
-        res.render('task', { task: result._source });
+        res.send(result._source);
     } catch (error) {
         console.error(`Error fetching task from Elasticsearch: ${error.message}`);
         res.status(500).send('Error fetching task');
     }
-});
-
-// Serve homepage with form to trigger module execution
-app.get('/', (req, res) => {
-    res.render('index');
 });
 
 app.listen(port, () => {
