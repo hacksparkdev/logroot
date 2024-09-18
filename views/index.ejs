@@ -4,14 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trigger Python Module</title>
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
     <h1>Trigger Python Module</h1>
+
     <form action="/trigger-python-module" method="POST">
-        <label for="moduleName">Module Name:</label>
-        <input type="text" name="moduleName" id="moduleName" required>
-        <button type="submit">Run Module</button>
+        <label for="moduleName">Enter Module Name:</label>
+        <input type="text" id="moduleName" name="moduleName" required>
+        <button type="submit">Queue Module</button>
     </form>
+
+    <% if (message) { %>
+        <p><strong><%= message %></strong></p>
+    <% } %>
+
+    <h2>Previous Tasks</h2>
+    <!-- You can add task listing here if needed -->
 </body>
 </html>
 

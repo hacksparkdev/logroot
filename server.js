@@ -6,9 +6,12 @@ const port = 3000;
 
 // Middleware to parse JSON and form data
 app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // Add this line
+app.use(express.urlencoded({ extended: true }));
 
-// Set the view engine to EJS
+// Serve static files (like CSS) from the 'public' directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Set the view engine to EJS and define the 'views' directory
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -20,7 +23,7 @@ app.post('/trigger-python-module', async (req, res) => {
     const { moduleName } = req.body;
 
     if (!moduleName) {
-        return res.status(400).send('Module name is required');
+        return res.render('index', { message: 'Module name is required' });
     }
 
     try {
@@ -34,10 +37,10 @@ app.post('/trigger-python-module', async (req, res) => {
             }
         });
 
-        res.send(`Module ${moduleName} queued for execution with task ID: ${result._id}`);
+        res.render('index', { message: `Module ${moduleName} queued for execution with task ID: ${result._id}` });
     } catch (error) {
         console.error(`Error adding task to Elasticsearch: ${error.message}`);
-        res.status(500).send('Error adding task');
+        res.render('index', { message: 'Error adding task to Elasticsearch' });
     }
 });
 
@@ -62,9 +65,10 @@ app.get('/task/:id', async (req, res) => {
 
 // Serve homepage with form to trigger module execution
 app.get('/', (req, res) => {
-    res.render('index');
+    res.render('index', { message: null });
 });
 
+// Start the server
 app.listen(port, () => {
     console.log(`Node.js server running on http://localhost:${port}`);
 });
