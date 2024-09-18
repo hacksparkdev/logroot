@@ -1,9 +1,12 @@
 const express = require('express');
 const { Client } = require('@elastic/elasticsearch');
+const path = require('path');
 const app = express();
 const port = 3000;
 
 app.use(express.json());
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
 // Initialize Elasticsearch client
 const esClient = new Client({ node: 'http://10.10.20.107:9200' });
@@ -34,7 +37,7 @@ app.post('/trigger-python-module', async (req, res) => {
     }
 });
 
-// Endpoint to fetch task result by ID
+// Endpoint to fetch task result by ID and render it
 app.get('/task/:id', async (req, res) => {
     const { id } = req.params;
 
@@ -45,14 +48,20 @@ app.get('/task/:id', async (req, res) => {
             id: id
         });
 
-        res.send(result._source);
+        // Render the result using EJS
+        res.render('task', { task: result._source });
     } catch (error) {
         console.error(`Error fetching task from Elasticsearch: ${error.message}`);
         res.status(500).send('Error fetching task');
     }
 });
 
+// Serve homepage with form to trigger module execution
+app.get('/', (req, res) => {
+    res.render('index');
+});
+
 app.listen(port, () => {
-    console.log(`Node.js server running on <http://localhost>:${port}`);
+    console.log(`Node.js server running on http://localhost:${port}`);
 });
 
