@@ -1,12 +1,9 @@
-import socket
+from elasticsearch import Elasticsearch
 import time
 import importlib.util
-from elasticsearch import Elasticsearch
+import json  # Import the json library to handle JSON conversion
 
 es = Elasticsearch(['http://10.10.20.107:9200'])  # Change to your Elasticsearch server's IP and port
-
-# Get the current machine's hostname
-current_hostname = socket.gethostname()
 
 # Function to load and run the module
 def load_and_run_module(module_name):
@@ -20,7 +17,8 @@ def load_and_run_module(module_name):
         # Check if the module has a run() function and execute it
         if hasattr(module, 'run'):
             output = module.run()  # Collect output from the module
-            return True, f"Module executed successfully. Output: {output}"
+            # Convert output to JSON (ensure it's a dictionary)
+            return True, json.dumps(output, indent=4)  # Format with indentation for readability
         else:
             return False, f"Module {module_name} has no 'run' function"
     
@@ -35,11 +33,8 @@ def poll_tasks():
         # Search for tasks in the "pending" state in the python-tasks index
         res = es.search(index='python-tasks', body={
             "query": {
-                "bool": {
-                    "must": [
-                        {"match": {"status": "pending"}},
-                        {"match": {"hostname": current_hostname}}  # Only match tasks for this hostname
-                    ]
+                "match": {
+                    "status": "pending"
                 }
             }
         })
@@ -49,7 +44,7 @@ def poll_tasks():
             task_id = hit['_id']
             module_name = hit['_source']['moduleName']
 
-            print(f"Running module {module_name} for task {task_id} on {current_hostname}")
+            print(f"Running module {module_name} for task {task_id}")
 
             # Update task status to "running"
             es.update(index='python-tasks', id=task_id, body={
@@ -60,11 +55,11 @@ def poll_tasks():
             success, result = load_and_run_module(module_name)
             new_status = "completed" if success else "failed"
 
-            # Update Elasticsearch with the new task status and result
+            # Store the result and update task status in Elasticsearch
             es.update(index='python-tasks', id=task_id, body={
                 "doc": {
                     "status": new_status,
-                    "result": result
+                    "result": result  # This will now be in JSON format
                 }
             })
 
@@ -73,6 +68,4 @@ def poll_tasks():
 
 if __name__ == "__main__":
     poll_tasks()
-
-
 
