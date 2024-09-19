@@ -1,29 +1,29 @@
 const express = require('express');
 const { Client } = require('@elastic/elasticsearch');
+const path = require('path');
 const app = express();
 const port = 3000;
 
+// Middleware to parse JSON and form data
 app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // To handle form data
+app.use(express.urlencoded({ extended: true }));
 
-// Set the view engine to EJS
+// Serve static files (like CSS) from the 'public' directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Set the view engine to EJS and define the 'views' directory
 app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
 // Initialize Elasticsearch client
 const esClient = new Client({ node: 'http://10.10.20.107:9200' });
 
-// Serve the form on the root route
-app.get('/', (req, res) => {
-    res.render('index', { errorMessage: null }); // Render form without any errors initially
-});
-
 // Endpoint to queue a Python module execution
 app.post('/trigger-python-module', async (req, res) => {
-    const { moduleName, hostname } = req.body;
+    const { moduleName } = req.body;
 
-    if (!moduleName || !hostname) {
-        // If the form submission is incomplete, show an error
-        return res.render('index', { errorMessage: 'Module name and hostname are required' });
+    if (!moduleName) {
+        return res.render('index', { message: 'Module name is required' });
     }
 
     try {
@@ -32,21 +32,19 @@ app.post('/trigger-python-module', async (req, res) => {
             index: 'python-tasks',
             document: {
                 moduleName: moduleName,
-                hostname: hostname, // Include hostname in the task document
                 status: 'pending',
                 created_at: new Date().toISOString()
             }
         });
 
-        // Redirect to task result page after queuing the module
-        res.redirect(`/task/${result._id}`);
+        res.render('index', { message: `Module ${moduleName} queued for execution with task ID: ${result._id}` });
     } catch (error) {
         console.error(`Error adding task to Elasticsearch: ${error.message}`);
-        res.render('index', { errorMessage: 'Error adding task' });
+        res.render('index', { message: 'Error adding task to Elasticsearch' });
     }
 });
 
-// Endpoint to fetch task result by ID
+// Endpoint to fetch task result by ID and render it
 app.get('/task/:id', async (req, res) => {
     const { id } = req.params;
 
@@ -57,15 +55,21 @@ app.get('/task/:id', async (req, res) => {
             id: id
         });
 
-        res.send(result._source);
+        // Render the result using EJS
+        res.render('task', { task: result._source });
     } catch (error) {
         console.error(`Error fetching task from Elasticsearch: ${error.message}`);
         res.status(500).send('Error fetching task');
     }
 });
 
+// Serve homepage with form to trigger module execution
+app.get('/', (req, res) => {
+    res.render('index', { message: null });
+});
+
+// Start the server
 app.listen(port, () => {
     console.log(`Node.js server running on http://localhost:${port}`);
 });
-
 
