@@ -11,6 +11,6 @@ def run():
     ipconfig_result = results.stdout
     matches = re.findall(ip_pattern, ipconfig_result )
     for match in matches:
-        print(match)
+        return matches
 
 
