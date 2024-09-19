@@ -5,54 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Result</title>
     <link rel="stylesheet" href="/styles.css">
-    <!-- Add FontAwesome for icons -->
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>Task Result</h1>
-
-        <!-- Task Result Card -->
-        <div class="task-card">
-            <div class="task-header">
-                <h2>Module: <%= task.moduleName %></h2>
-                <!-- Status with icon and color -->
-                <span class="status <% if(task.status === 'success') { %> success <% } else if (task.status === 'pending') { %> pending <% } else { %> failure <% } %>">
-                    <i class="fas <% if(task.status === 'success') { %> fa-check-circle <% } else if (task.status === 'pending') { %> fa-clock <% } else { %> fa-times-circle <% } %>"></i>
-                    <%= task.status %>
-                </span>
-            </div>
-
-            <!-- Task Details -->
-            <div class="task-body">
-                <table class="task-table">
-                    <tr>
-                        <th>Parameter</th>
-                        <th>Value</th>
-                    </tr>
-                    <tr>
-                        <td>Module Name</td>
-                        <td><%= task.moduleName %></td>
-                    </tr>
-                    <tr>
-                        <td>Status</td>
-                        <td><%= task.status %></td>
-                    </tr>
-                    <tr>
-                        <td>Created At</td>
-                        <td><%= task.created_at %></td>
-                    </tr>
-                    <tr>
-                        <td>Result</td>
-                        <td><%= task.result || 'Result pending...' %></td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-
-        <!-- Back Button -->
-        <a class="back-button" href="/">Back to Home</a>
-    </div>
+    <h1>Task Result</h1>
+    <p><strong>Task ID:</strong> <%= task._id %></p>
+    <p><strong>Module Name:</strong> <%= task.moduleName %></p>
+    <p><strong>Status:</strong> <%= task.status %></p>
+    <p><strong>Result:</strong> <%= task.result %></p>
 </body>
 </html>
 

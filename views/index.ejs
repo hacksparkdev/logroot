@@ -3,24 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trigger Python Module</title>
+    <title>Dashboard</title>
     <link rel="stylesheet" href="/styles.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/scripts.js" defer></script>
 </head>
 <body>
-    <h1>Trigger Python Module</h1>
+    <h1>Dashboard</h1>
 
-    <form action="/trigger-python-module" method="POST">
-        <label for="moduleName">Enter Module Name:</label>
-        <input type="text" id="moduleName" name="moduleName" required>
-        <button type="submit">Queue Module</button>
-    </form>
+    <div id="logs">
+        <h2>Real-Time Logs</h2>
+        <ul id="logList"></ul>
+    </div>
 
-    <% if (message) { %>
-        <p><strong><%= message %></strong></p>
-    <% } %>
+    <div id="modules">
+        <h2>Run Modules</h2>
+        <form action="/trigger-python-module" method="POST">
+            <label for="moduleName">Module Name:</label>
+            <input type="text" id="moduleName" name="moduleName" required>
 
-    <h2>Previous Tasks</h2>
-    <!-- You can add task listing here if needed -->
+            <label for="hostname">Hostname (optional):</label>
+            <input type="text" id="hostname" name="hostname">
+
+            <button type="submit">Run Module</button>
+        </form>
+    </div>
+
+    <p><%= message %></p>
 </body>
 </html>
 
