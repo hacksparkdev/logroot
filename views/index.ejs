@@ -2,25 +2,29 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trigger Python Module</title>
-    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-    <h1>Trigger Python Module</h1>
+    <h1>Trigger Python Module on Specific Machine</h1>
 
     <form action="/trigger-python-module" method="POST">
-        <label for="moduleName">Enter Module Name:</label>
-        <input type="text" id="moduleName" name="moduleName" required>
-        <button type="submit">Queue Module</button>
+        <label for="moduleName">Module Name:</label>
+        <input type="text" id="moduleName" name="moduleName" placeholder="Enter module name" required>
+        <br><br>
+
+        <label for="hostname">Hostname:</label>
+        <input type="text" id="hostname" name="hostname" placeholder="Enter machine hostname" required>
+        <br><br>
+
+        <button type="submit">Run Module</button>
     </form>
 
-    <% if (message) { %>
-        <p><strong><%= message %></strong></p>
+    <% if (errorMessage) { %>
+        <p style="color: red;"><%= errorMessage %></p>
     <% } %>
 
-    <h2>Previous Tasks</h2>
-    <!-- You can add task listing here if needed -->
 </body>
 </html>
 
