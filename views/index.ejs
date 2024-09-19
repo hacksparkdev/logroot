@@ -12,21 +12,8 @@
     <h1>Dashboard</h1>
 
     <div id="logs">
-        <h2>Real-Time Logs</h2>
+        <h2>Real-Time Security Logs</h2>
         <ul id="logList"></ul>
-    </div>
-
-    <div id="modules">
-        <h2>Run Modules</h2>
-        <form action="/trigger-python-module" method="POST">
-            <label for="moduleName">Module Name:</label>
-            <input type="text" id="moduleName" name="moduleName" required>
-
-            <label for="hostname">Hostname (optional):</label>
-            <input type="text" id="hostname" name="hostname">
-
-            <button type="submit">Run Module</button>
-        </form>
     </div>
 
     <p><%= message %></p>

@@ -1,26 +1,44 @@
-import win32evtlog as winevt
+import win32evtlog
+from elasticsearch import Elasticsearch
+import time
 
-def read_event_log(log_type='Security'):
+es = Elasticsearch(['http://10.10.20.107:9200'])  # Adjust to your Elasticsearch URL
+
+def collect_windows_event_logs(log_type='Security'):
     server = 'localhost'
-    handle = winevt.OpenEventLog(server, log_type)
-    total = winevt.GetNumberOfEventLogRecords(handle)
+    log = win32evtlog.OpenEventLog(server, log_type)
+    collected_logs = []  # To hold the logs temporarily
 
-    flags = winevt.EVENTLOG_BACKWARDS_READ | winevt.EVENTLOG_SEQUENTIAL_READ
-    events = winevt.ReadEventLog(handle, flags, 0)
+    while True:
+        events = win32evtlog.ReadEventLog(log, win32evtlog.EVENTLOG_SEQUENTIAL_READ | win32evtlog.EVENTLOG_FORWARDS_READ, 0)
+        
+        if events:
+            for event in events:
+                event_data = {
+                    'event_id': event.EventID,
+                    'source': event.SourceName,
+                    'message': win32evtlog.FormatMessage(event),
+                    'timestamp': event.TimeGenerated.isoformat()
+                }
+                
+                # Send event to Elasticsearch
+                es.index(index='security-logs', document=event_data)
 
-    event_data = []
+                # Collect logs to return them
+                collected_logs.append(event_data)
 
-    for event in events:
-        event_info = {
-            'EventID': event.EventID,
-            'Source': event.SourceName,
-            'Description': winevt.FormatMessage(winevt.EVENTLOG_AUDIT_FAILURE)
-        }
-        event_data.append(event_info)
+        time.sleep(5)  # Adjust polling interval as needed
 
-    # Return the list of event logs instead of printing
-    return event_data
+        # Return collected logs for display purposes
+        if collected_logs:
+            return collected_logs
+
+    win32evtlog.CloseEventLog(log)
 
 def run():
-    # Call the read_event_log function and return the result
-    return read_event_log()
+    """This is the required run function for the module."""
+    return collect_windows_event_logs()
+
+if __name__ == "__main__":
+    run()
+
