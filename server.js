@@ -2,21 +2,28 @@ const express = require('express');
 const { Client } = require('@elastic/elasticsearch');
 const app = express();
 const port = 3000;
-const path = require('path');
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true })); // To handle form data
+
+// Set the view engine to EJS
+app.set('view engine', 'ejs');
 
 // Initialize Elasticsearch client
 const esClient = new Client({ node: 'http://10.10.20.107:9200' });
 
-app.use(express.json());
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+// Serve the form on the root route
+app.get('/', (req, res) => {
+    res.render('index', { errorMessage: null }); // Render form without any errors initially
+});
 
-// Endpoint to queue a Python module execution for a specific hostname
+// Endpoint to queue a Python module execution
 app.post('/trigger-python-module', async (req, res) => {
     const { moduleName, hostname } = req.body;
 
     if (!moduleName || !hostname) {
-        return res.status(400).send('Module name and hostname are required');
+        // If the form submission is incomplete, show an error
+        return res.render('index', { errorMessage: 'Module name and hostname are required' });
     }
 
     try {
@@ -25,7 +32,7 @@ app.post('/trigger-python-module', async (req, res) => {
             index: 'python-tasks',
             document: {
                 moduleName: moduleName,
-                hostname: hostname,
+                hostname: hostname, // Include hostname in the task document
                 status: 'pending',
                 created_at: new Date().toISOString()
             }
@@ -35,7 +42,7 @@ app.post('/trigger-python-module', async (req, res) => {
         res.redirect(`/task/${result._id}`);
     } catch (error) {
         console.error(`Error adding task to Elasticsearch: ${error.message}`);
-        res.status(500).send('Error adding task');
+        res.render('index', { errorMessage: 'Error adding task' });
     }
 });
 
@@ -50,7 +57,7 @@ app.get('/task/:id', async (req, res) => {
             id: id
         });
 
-        res.render('task', { task: result._source });
+        res.send(result._source);
     } catch (error) {
         console.error(`Error fetching task from Elasticsearch: ${error.message}`);
         res.status(500).send('Error fetching task');
