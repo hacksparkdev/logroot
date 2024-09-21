@@ -4,7 +4,7 @@ from elasticsearch import Elasticsearch
 from datetime import datetime
 
 # Elasticsearch connection
-es = Elasticsearch([{'host': '10.10.20.107', 'port': 9200, 'scgene': 'http'}])  # Replace with your Elasticsearch host
+es = Elasticsearch([{'host': '10.10.20.107', 'port': 9200, 'scheme': 'http'}])  # Replace with your Elasticsearch host
 
 # Function to clean and parse logs
 def clean_log(data):
