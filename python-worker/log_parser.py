@@ -1,17 +1,18 @@
 import socket
 import json
-import requests
+from elasticsearch import Elasticsearch
+from datetime import datetime
 
-# Logstash server details
-LOGSTASH_URL = 'http://10.10.20.106:5044'  # Replace with your Logstash IP and port
+# Elasticsearch connection
+es = Elasticsearch([{'host': '10.10.20.107', 'port': 9200}])  # Replace with your Elasticsearch host
 
-# Function to clean and convert log to JSON
+# Function to clean and parse logs
 def clean_log(data):
     try:
         # Decode the log data to string
         log_str = data.decode('utf-8')
 
-        # Attempt to parse the log string into JSON (Winlogbeat usually sends logs in JSON format)
+        # Attempt to parse the log string into JSON (Winlogbeat sends logs in JSON format)
         parsed_log = json.loads(log_str)
 
         # Clean the log (remove non-UTF-8 characters if necessary)
@@ -27,17 +28,14 @@ def clean_log(data):
         print(f"Error cleaning log: {e}")
         return None
 
-# Function to send log to Logstash
-def send_to_logstash(log):
+# Function to send log to Elasticsearch
+def send_to_elasticsearch(log):
     try:
-        headers = {'Content-Type': 'application/json'}
-        response = requests.post(LOGSTASH_URL, data=json.dumps(log), headers=headers)
-        if response.status_code == 200:
-            print("Log successfully sent to Logstash")
-        else:
-            print(f"Failed to send log to Logstash: {response.status_code}, {response.text}")
+        index_name = "winlogbeat-" + datetime.now().strftime("%Y.%m.%d")  # Create a daily index
+        response = es.index(index=index_name, body=log)
+        print(f"Log successfully indexed to Elasticsearch: {response['_id']}")
     except Exception as e:
-        print(f"Error sending log to Logstash: {e}")
+        print(f"Error sending log to Elasticsearch: {e}")
 
 # TCP listener to receive logs from Winlogbeat
 def tcp_listener(host='0.0.0.0', port=5045):
@@ -53,7 +51,7 @@ def tcp_listener(host='0.0.0.0', port=5045):
         if data:
             cleaned_log = clean_log(data)
             if cleaned_log:
-                send_to_logstash(cleaned_log)
+                send_to_elasticsearch(cleaned_log)
         client_socket.close()
 
 if __name__ == "__main__":
