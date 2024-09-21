@@ -9,11 +9,21 @@ es = Elasticsearch([{'host': '10.10.20.107', 'port': 9200, 'scheme': 'http'}])  
 # Function to clean and parse logs
 def clean_log(data):
     try:
-        # Decode the log data to string
-        log_str = data.decode('utf-8')
+        # Decode the log data to string (attempt UTF-8 first, then fallback to errors='replace')
+        try:
+            log_str = data.decode('utf-8')
+        except UnicodeDecodeError as e:
+            print(f"Unicode decode error: {e}. Attempting with errors='replace'.")
+            log_str = data.decode('utf-8', errors='replace')  # Replace invalid characters
 
-        # Attempt to parse the log string into JSON (Winlogbeat sends logs in JSON format)
+        # Debug: Print the raw log data for inspection
+        print(f"Raw log data: {log_str}")
+
+        # Attempt to parse the log string into JSON
         parsed_log = json.loads(log_str)
+        
+        # Debug: Print the parsed log to verify JSON parsing
+        print(f"Parsed log data: {parsed_log}")
 
         # Clean the log (remove non-UTF-8 characters if necessary)
         cleaned_log = {
@@ -49,8 +59,10 @@ def tcp_listener(host='0.0.0.0', port=5045):
         print(f"Connection established with {addr}")
         data = client_socket.recv(1024)
         if data:
+            # Attempt to clean and parse the log
             cleaned_log = clean_log(data)
             if cleaned_log:
+                # Send the cleaned log to Elasticsearch
                 send_to_elasticsearch(cleaned_log)
         client_socket.close()
 
