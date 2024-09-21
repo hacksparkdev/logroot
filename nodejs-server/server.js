@@ -7,14 +7,14 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Set up Elasticsearch client
-const client = new Client({ node: 'http://localhost:9200' });
+const client = new Client({ node: 'http://10.10.20.107:9200' });
 
 app.get('/logs', async (req, res) => {
     try {
         // Query Elasticsearch for logs
         const result = await client.search({
-            index: 'logs_index',  // Replace with your Elasticsearch index
-            size: 100,            // Number of logs to display
+            index: 'winlogbeat-2024.09.21',  // Replace with your Elasticsearch index
+            size: 20,            // Number of logs to display
             body: {
                 query: {
                     match_all: {}  // Fetch all logs, you can customize this to match specific queries
