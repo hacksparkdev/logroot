@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alerts Page</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="mb-4">Alerts Dashboard</h1>
+
+        <table class="table table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Title</th>
+                    <th>Severity</th>
+                    <th>Source</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% alerts.forEach(alert => { %>
+                    <tr>
+                        <td><%= new Date(alert._source['@timestamp']).toLocaleString() %></td>
+                        <td><%= alert._source.title %></td>
+                        <td>
+                            <% if (alert._source.severity === 'high') { %>
+                                <span class="badge bg-danger">High</span>
+                            <% } else if (alert._source.severity === 'medium') { %>
+                                <span class="badge bg-warning">Medium</span>
+                            <% } else { %>
+                                <span class="badge bg-success">Low</span>
+                            <% } %>
+                        </td>
+                        <td><%= alert._source.source %></td>
+                        <td>
+                            <% if (alert._source.status === 'open') { %>
+                                <span class="badge bg-info">Open</span>
+                            <% } else { %>
+                                <span class="badge bg-secondary">Closed</span>
+                            <% } %>
+                        </td>
+                        <td>
+                            <!-- Actions -->
+                            <a href="/alerts/<%= alert._id %>" class="btn btn-sm btn-primary">View</a>
+                            <a href="/alerts/investigate/<%= alert._id %>" class="btn btn-sm btn-warning">Investigate</a>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Bootstrap JS and Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
+
