@@ -60,7 +60,7 @@ app.get('/alerts/:id', async (req, res) => {
 
         // Fetch the specific alert by its ID
         const alert = await client.get({
-            index: 'alerts_index',  // Replace 'alerts_index' with your actual alerts index
+            index: 'alerts',  // Replace 'alerts_index' with your actual alerts index
             id: alertId
         });
 
