@@ -36,8 +36,8 @@ app.get('/alerts', async (req, res) => {
     try {
         // Query Elasticsearch for alerts (replace 'alerts_index' with your actual index)
         const result = await client.search({
-            index: 'alerts_index',  // Replace this with your alerts index
-            size: 50,  // Adjust the number of alerts to display
+            index: 'alerts',  // Replace this with your alerts index
+            size: 10,  // Adjust the number of alerts to display
             body: {
                 query: {
                     match_all: {}  // Fetch all alerts, customize this as needed
