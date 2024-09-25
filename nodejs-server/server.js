@@ -73,6 +73,10 @@ app.get('/alerts/:id', async (req, res) => {
     }
 });
 
+app.get('/dashboard', (req, res) => {
+    res.render('dashboard')
+})
+
 app.listen(3000, () => {
     console.log('Server started on http://localhost:3000');
 });
