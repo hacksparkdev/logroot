@@ -4,6 +4,7 @@ const { Client } = require('@elastic/elasticsearch');
 
 const app = express();
 app.set('view engine', 'ejs');
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Set up Elasticsearch client
