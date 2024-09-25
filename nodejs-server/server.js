@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const { Client } = require('@elastic/elasticsearch');
+const path = require('path')
 
 const app = express();
 app.set('view engine', 'ejs');
