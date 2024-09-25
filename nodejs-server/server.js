@@ -15,7 +15,7 @@ app.get('/logs', async (req, res) => {
     try {
         // Query Elasticsearch for logs
         const result = await client.search({
-            index: 'winlogbeat-2024.09.21',  // Replace with your Elasticsearch index
+		index: 'winlogbeat-2024.09.25',  // Replace with your Elasticsearch index
             size: 20,            // Number of logs to display
             body: {
                 query: {
