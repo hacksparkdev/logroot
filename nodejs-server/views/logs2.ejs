@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log Table - Wazuh Style</title>
+  <!-- Bootstrap CSS -->
+  <link
+    href="/css/bootstrap.min.css"
+    rel="stylesheet"
+  >
+  <style>
+    .table-wrapper {
+      margin: 20px;
+      max-width: 100%;
+    }
+
+    .table th, .table td {
+      vertical-align: middle;
+      text-align: center;
+    }
+
+    .table thead th {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+      background-color: #f9f9f9;
+    }
+
+    .table-hover tbody tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    /* Optional: Add table pagination styles */
+    .pagination {
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="table-wrapper">
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <input type="text" id="searchInput" class="form-control" placeholder="Search logs...">
+        </div>
+        <div class="col-md-6 text-right">
+          <button class="btn btn-primary" onclick="exportLogs()">Export Logs</button>
+        </div>
+      </div>
+
+      <table class="table table-bordered table-striped table-hover">
+        <thead>
+          <tr>
+            <th>Log ID</th>
+            <th>Timestamp</th>
+            <th>Source</th>
+            <th>Event</th>
+            <th>Severity</th>
+          </tr>
+        </thead>
+        <tbody id="logTableBody">
+          <!-- Example log rows -->
+          <tr>
+            <td>001</td>
+            <td>2024-09-26 12:34:56</td>
+            <td>System</td>
+            <td>Unauthorized login attempt</td>
+            <td class="text-danger">High</td>
+          </tr>
+          <tr>
+            <td>002</td>
+            <td>2024-09-26 12:35:20</td>
+            <td>Application</td>
+            <td>Application crash</td>
+            <td class="text-warning">Medium</td>
+          </tr>
+          <tr>
+            <td>003</td>
+            <td>2024-09-26 12:36:05</td>
+            <td>Network</td>
+            <td>Suspicious packet detected</td>
+            <td class="text-danger">High</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Pagination (optional) -->
+      <nav>
+        <ul class="pagination">
+          <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+          <li class="page-item"><a class="page-link" href="#">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item"><a class="page-link" href="#">Next</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS (optional, for dropdowns/modals) -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <!-- Simple search filter functionality -->
+  <script>
+    document.getElementById('searchInput').addEventListener('input', function() {
+      let filter = this.value.toLowerCase();
+      let rows = document.querySelectorAll('#logTableBody tr');
+      rows.forEach(row => {
+        let cells = row.querySelectorAll('td');
+        let rowText = Array.from(cells).map(cell => cell.textContent.toLowerCase()).join(' ');
+        row.style.display = rowText.includes(filter) ? '' : 'none';
+      });
+    });
+
+    // Placeholder for export functionality
+    function exportLogs() {
+      alert('Export functionality not implemented.');
+    }
+  </script>
+
+</body>
+</html>
