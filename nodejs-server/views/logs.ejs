@@ -3,32 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logs Table</title>
+    <title>Logs Table - Wazuh Style with DataTables</title>
+    <!-- Bootstrap CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <style>
+        .table-wrapper {
+            margin: 20px;
+            max-width: 100%;
+        }
+
+        .table th, .table td {
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .table thead th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: #f9f9f9;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
 </head>
 <body>
-    <h1>Logs Table</h1>
-    <table id="logsTable" class="display">
-        <thead>
-            <tr>
-                <th>Timestamp</th>
-                <th>Host</th>
-                <th>Message</th>
-                <th>Log Level</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% logs.forEach(log => { %>
-                <tr>
-                    <td><%= new Date(log._source['@timestamp']).toLocaleString() %></td>
-                    <td><%= log._source.host ? log._source.host.name : 'N/A' %></td>
-                    <td><%= log._source.message %></td>
-                    <td><%= log._source.log ? log._source.log.level : 'N/A' %></td>
-                </tr>
-            <% }) %>
-        </tbody>
-    </table>
 
+    <div class="container">
+        <div class="table-wrapper">
+            <h1>Logs Table</h1>
+            <table id="logsTable" class="table table-bordered table-striped table-hover display">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Host</th>
+                        <th>Message</th>
+                        <th>Log Level</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% logs.forEach(log => { %>
+                        <tr>
+                            <td><%= new Date(log._source['@timestamp']).toLocaleString() %></td>
+                            <td><%= log._source.host ? log._source.host.name : 'N/A' %></td>
+                            <td><%= log._source.message %></td>
+                            <td>
+                                <span class="<%= log._source.log && log._source.log.level === 'error' ? 'text-danger' : log._source.log.level === 'warning' ? 'text-warning' : 'text-success' %>">
+                                    <%= log._source.log ? log._source.log.level : 'N/A' %>
+                                </span>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- jQuery and DataTables JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script>
@@ -38,4 +75,3 @@
     </script>
 </body>
 </html>
-

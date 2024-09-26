@@ -26,53 +26,12 @@ app.get('/logs', async (req, res) => {
         });
 
         // Pass logs to the EJS view
-        res.render('logs2', { logs: result.hits.hits });
+        res.render('logs', { logs: result.hits.hits });
     } catch (err) {
         console.error(err);
         res.status(500).send('Error fetching logs');
     }
 });
-
-app.get('/filter', async (req, res) => {
-    const { logLevel, eventType, timeRange } = req.query;
-    const query = { bool: { must: [] } };
-
-    // Add log level filter if provided
-    if (logLevel) {
-        query.bool.must.push({ term: { 'log.level.keyword': logLevel } });
-    }
-
-    // Add event type filter if provided
-    if (eventType) {
-        query.bool.must.push({ match: { 'event.type': eventType } });
-    }
-
-    // Add time range filter if provided
-    if (timeRange) {
-        const now = new Date();
-        const pastTime = new Date(now.getTime() - timeRange * 60 * 60 * 1000);
-        query.bool.must.push({
-            range: {
-                '@timestamp': {
-                    gte: pastTime.toISOString(),
-                    lte: now.toISOString()
-                }
-            }
-        });
-    }
-
-    try {
-        const result = await client.search({
-            index: 'winlogbeat-*',
-            body: { query }
-        });
-        res.render('filter', { logs: result.hits.hits });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Error fetching logs');
-    }
-});
-
 
 app.get('/dashboard', (req, res) => {
     res.render('dashboard')
