@@ -8,48 +8,29 @@
     <title>Document</title>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="container">
-            <a href="#" class="logo">TheHive Clone</a>
-            <ul class="nav-links">
-                <li><a href="#">Dashboard</a></li>
-                <li><a href="#">Alerts</a></li>
-                <li><a href="#">Cases</a></li>
-                <li><a href="#">Analytics</a></li>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Navbar</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Features</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Pricing</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+              </li>
             </ul>
-            <div class="profile-section">
-                <input type="search" placeholder="Search">
-                <a href="#"><img src="profile.png" alt="Profile Icon"></a>
-            </div>
+          </div>
         </div>
-    </nav>
-
-    <!-- Dashboard -->
-    <section class="dashboard">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-4 col-md-6">
-                    <div class="widget alert-summary">
-                        <h3>Recent Alerts</h3>
-                        <!-- Placeholder for alert items -->
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="widget case-summary">
-                        <h3>Case Summary</h3>
-                        <!-- Placeholder for cases -->
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-12">
-                    <div class="widget analytics">
-                        <h3>Analytics</h3>
-                        <!-- Placeholder for graphs and charts -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    
+      </nav>
 </body>
 </html>
