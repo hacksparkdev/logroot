@@ -26,7 +26,7 @@ app.get('/logs', async (req, res) => {
         });
 
         // Pass logs to the EJS view
-        res.render('logs', { logs: result.hits.hits });
+        res.render('logs2', { logs: result.hits.hits });
     } catch (err) {
         console.error(err);
         res.status(500).send('Error fetching logs');
