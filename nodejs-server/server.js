@@ -17,7 +17,7 @@ app.get('/logs', async (req, res) => {
         // Query Elasticsearch for logs
         const result = await client.search({
 		index: 'winlogbeat-*',  // Replace with your Elasticsearch index
-            size: 20,            // Number of logs to display
+            size: 200,            // Number of logs to display
             body: {
                 query: {
                     match_all: {}  // Fetch all logs, you can customize this to match specific queries
