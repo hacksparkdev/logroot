@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Log Dashboard</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        table td {
+            word-wrap: break-word;
+            white-space: normal;
+        }
+        /* Optional: Limit the max width of the table cells */
+        td, th {
+            max-width: 300px;
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-4">
@@ -38,7 +48,7 @@
         </form>
 
         <!-- Log Table -->
-        <table class="table table-striped mt-4">
+        <table class="table table-striped mt-4 table-responsive">
             <thead>
                 <tr>
                     <th>Timestamp</th>
