@@ -33,6 +33,31 @@ app.get('/logs', async (req, res) => {
     }
 });
 
+app.get('/filter', async (req, res) => {
+    const { logLevel, eventType } = req.query;
+    const query = { bool: { must: [] } };
+
+    if (logLevel) {
+        query.bool.must.push({ term: { 'log.level.keyword': logLevel } });
+    }
+
+    if (eventType) {
+        query.bool.must.push({ match: { event: eventType } });
+    }
+
+    try {
+        const result = await esClient.search({
+            index: 'your-log-index',
+            body: { query }
+        });
+        res.render('filter', { logs: result.hits.hits });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error fetching logs');
+    }
+});
+
+
 app.get('/dashboard', (req, res) => {
     res.render('dashboard')
 })
