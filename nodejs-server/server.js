@@ -34,15 +34,31 @@ app.get('/logs', async (req, res) => {
 });
 
 app.get('/filter', async (req, res) => {
-    const { logLevel, eventType } = req.query;
+    const { logLevel, eventType, timeRange } = req.query;
     const query = { bool: { must: [] } };
 
+    // Add log level filter if provided
     if (logLevel) {
         query.bool.must.push({ term: { 'log.level.keyword': logLevel } });
     }
 
+    // Add event type filter if provided
     if (eventType) {
-        query.bool.must.push({ match: { event: eventType } });
+        query.bool.must.push({ match: { 'event.type': eventType } });
+    }
+
+    // Add time range filter if provided
+    if (timeRange) {
+        const now = new Date();
+        const pastTime = new Date(now.getTime() - timeRange * 60 * 60 * 1000);
+        query.bool.must.push({
+            range: {
+                '@timestamp': {
+                    gte: pastTime.toISOString(),
+                    lte: now.toISOString()
+                }
+            }
+        });
     }
 
     try {
