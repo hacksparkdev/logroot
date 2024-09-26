@@ -53,7 +53,7 @@
                         <td><%= new Date(log._source['@timestamp']).toLocaleString() %></td>
                         <td><%= log._source['log.level'] %></td>
                         <td><%= log._source.event.type %></td>
-                        <td><%= log._source.description %></td>
+                        <td><%= log._source.Description %></td>
                     </tr>
                 <% }) %>
             </tbody>
