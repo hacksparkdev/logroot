@@ -46,7 +46,7 @@ app.get('/filter', async (req, res) => {
     }
 
     try {
-        const result = await Client.search({
+        const result = await client.search({
             index: 'winlogbeat-*',
             body: { query }
         });
