@@ -1,0 +1,10 @@
+{
+  "modules": [
+    {
+      "name": "Network Traffic Monitoring",
+      "description": "Capture and analyze network packets, looking for suspicious activity or anomalies.",
+      "script": "networkTraffic.py",
+    },
+  ]
+}
+
