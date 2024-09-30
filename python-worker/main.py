@@ -36,40 +36,56 @@ def run_module(module_name, params):
 
 # Function to send results to Elasticsearch
 def send_results_to_elasticsearch(result):
-    url = "http://10.10.20.107:9200/cybersecurity-results/_doc"
+    es_url = "http://<elasticsearch-server-ip>:9200/cybersecurity-results/_doc"
     headers = {'Content-Type': 'application/json'}
     
-    response = requests.post(url, json=result, headers=headers)
+    response = requests.post(es_url, json=result, headers=headers)
     if response.status_code == 201:
         print("Results sent to Elasticsearch successfully.")
     else:
         print(f"Failed to send results: {response.status_code}, {response.text}")
 
-# Main function to wait for tasks from Node.js server
+# Function to poll the Node.js server for tasks
+def poll_for_tasks():
+    try:
+        # Poll the Node.js server for new tasks
+        response = requests.get("http://<node-server-ip>:3000/pending-tasks")
+        if response.status_code == 200:
+            tasks = response.json()
+            return tasks
+        else:
+            print(f"Error polling tasks: {response.status_code}")
+            return []
+    except Exception as e:
+        print(f"Error occurred while polling for tasks: {e}")
+        return []
+
+# Main function to process tasks
 def main():
     while True:
-        try:
-            # Poll the Node.js server for new tasks
-            response = requests.get("http://10.10.20.100:3000/pending-tasks")
-            tasks = response.json()
+        tasks = poll_for_tasks()
 
-            for task in tasks:
-                module_name = task["module_name"]
-                task_id = task["task_id"]
-                params = task.get("params", {})
-                
+        for task in tasks:
+            module_name = task["module_name"]
+            task_id = task["task_id"]
+            params = task.get("params", {})
+            
+            print(f"Running module {module_name} for task {task_id}")
+            try:
                 # Run the requested module
                 result = run_module(module_name, params)
                 
-                # Add task ID to the result
+                # Add task ID to the result for tracking
                 result["task_id"] = task_id
                 
                 # Send the result to Elasticsearch
                 send_results_to_elasticsearch(result)
+                print(f"Task {task_id} completed successfully.")
+                
+            except Exception as e:
+                print(f"Error processing task {task_id}: {e}")
         
-        except Exception as e:
-            print(f"Error occurred: {e}")
-        
+        # Wait before polling for new tasks again (adjust polling interval as needed)
         time.sleep(10)
 
 if __name__ == "__main__":
